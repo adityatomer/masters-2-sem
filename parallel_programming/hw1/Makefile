@@ -2,12 +2,12 @@ CXX=g++
 
 CXXFLAGS=-std=c++11
 
-TARGET=dr_steal
+TARGET=inplace_matrixmul
 
-dr_steal:dr_steal.o
+inplace_matrixmul:inplace_matrixmul.o
 
 $(TARGET): $(TARGET).cpp
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(TARGET).o
 
 clean:
-	rm *.o dr_steal 
+	rm *.o inplace_matrixmul 
