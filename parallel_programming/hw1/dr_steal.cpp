@@ -42,6 +42,7 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 		getMul_IKJ(z,x,y,z_row, z_col, x_row, x_col, y_row, y_col,n,threadId);
 		return;
 	}
+
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col, x_row, x_col, y_row, y_col, n/2,threadId));
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col+n/2, x_row, x_col, y_row, y_col+n/2, n/2,threadId));
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row+n/2, z_col, x_row+n/2, x_col, y_row, y_col, n/2,threadId));

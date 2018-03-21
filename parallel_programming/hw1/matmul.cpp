@@ -237,8 +237,8 @@ int main(){
 
 	LL **z = getMatrixOfSizeR(n);
 
-	Work w=getWorkObject(&ParRecMM,z,x,y,n,currentThreadId);
-	allThreads[currentThreadId]->myDeque.push_back(w);
+	
+	allThreads[currentThreadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,n,currentThreadId));
 	// ParRecMM(z,x,y,n,currentThreadId);
 	// allThreads[currentThreadId]->compute();
 	for(int i=0;i<allThreads.size();++i){
