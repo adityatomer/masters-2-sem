@@ -1,5 +1,9 @@
+#ifndef MYSTACK_H
+#define MYSTACK_H
+
 #include <iostream>
 #include <stack>
+#include <mutex>
 #include "headers.h"
 #include<stdio.h>
 using namespace std;
@@ -60,7 +64,7 @@ public:
 // 	return 0;
 // }
 
-
+#endif
 
 
 

@@ -1,14 +1,17 @@
+#ifndef MyDeque_H
+#define MyDeque_H
 #include <iostream>
 #include <deque>
+#include <mutex>
 #include "headers.h"
 #include<stdio.h>
 using namespace std;
 // typedef long long LL;
 // typedef void(* FP)(LL**,LL**,int);
 
-class MyDeque
-{
+class MyDeque{
 	//LL** ParRecMM(LL **x, LL **y, int n)
+	private:
 	std::deque<Work> q;
 	std::mutex m;
 
@@ -17,6 +20,10 @@ class MyDeque
 
 		}
 
+		int size(){
+			std::unique_lock<std::mutex> lock(m);
+			return q.size();
+		}
 		void push_front(Work item){
 			std::unique_lock<std::mutex> lock(m);
 			q.push_front(item);
@@ -41,10 +48,11 @@ class MyDeque
 			return back;
 		}
 
-		~MyDeque();
+		// ~MyDeque();
 
 };
 
+#endif
 // void fun(LL **a,LL **b,int c)
 // {
 //     printf("Value of C is %d\n", c);
