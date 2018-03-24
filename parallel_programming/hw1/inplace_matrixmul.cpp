@@ -39,18 +39,18 @@ void getMul_IKJ(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,i
 void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType,int workId);
 
 void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
-	cout<<"ParRecMM "<<" threadId: "<<threadId<<" workId: "<<workId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
+	cout<<"ParRecMM "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
 	if(syncType!=NULL){
 		cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
-		if(syncType->value<=0){
-			cout<<"syncType->n: "<<syncType->n<<" syncType->z_row: "<<syncType->z_row<<" syncType->z_col: "<<syncType->z_col<<" syncType->x_row: "<<syncType->x_row<<" syncType->x_col: "<<syncType->x_col<<" syncType->y_row: "<<syncType->y_row<<" syncType->y_col: "<<syncType->y_col<<endl<<endl<<endl;
-		}
+		// if(syncType->value<=0){
+		// 	cout<<"syncType->n: "<<syncType->n<<" syncType->z_row: "<<syncType->z_row<<" syncType->z_col: "<<syncType->z_col<<" syncType->x_row: "<<syncType->x_row<<" syncType->x_col: "<<syncType->x_col<<" syncType->y_row: "<<syncType->y_row<<" syncType->y_col: "<<syncType->y_col<<endl<<endl<<endl;
+		// }
 	}else{
 		cout<<endl;
 	}
 	
 	if(n==1){
-		cout<<"BASE CASE\n";
+		// cout<<"BASE CASE\n";
 		getMul_IKJ(z,x,y,z_row, z_col, x_row, x_col, y_row, y_col,n,threadId);
  		allThreads[threadId]->myStack.decrementStackSyncObject(syncType);
 
@@ -60,27 +60,27 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 			// cout<<"SyncType S1 is 0, creating S2 =====>"<<s2<<" "<<s2->type<<" "<<s2->value<<" \n";//<<syncType->z_row<<" "<<syncType->z_col<<" "<<syncType->x_row<<" "<<syncType->x_col<<" "<<syncType->y_row<<" "<<syncType->y_col<<" "<<syncType->n<<endl;
 			// func2(z,x,y,syncType->z_row,syncType->z_col, syncType->x_row, syncType->x_col, syncType->y_row, syncType->y_col,syncType->n,threadId,s2,workId);
 			if(syncType->value==0){
-				cout<<"\nFunc2 SyncType 2 reached 0 for "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
-				if(syncType!=NULL){
-					cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
-				}else{
-					cout<<endl;
-				}
+				// cout<<"\nFunc2 SyncType 2 reached 0 for "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
+				// if(syncType!=NULL){
+				// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
+				// }else{
+				// 	cout<<endl;
+				// }
 				SyncType *p=syncType;
 
 				while(p!=NULL){
 					if(p->type==1){
-						cout<<" p->type: "<<p->type;
+						// cout<<" p->type: "<<p->type;
 						if(p->value==0){
-							cout<<" p->value is zero"<<endl;
+							// cout<<" p->value is zero"<<endl;
 							SyncType *s2=getSYNC_2(p);
 							allThreads[threadId]->myStack.push(s2);
-							cout<<"SyncType S1 is 0, creating S2 =====>"<<s2<<" "<<s2->type<<" "<<s2->value<<" \n";//<<syncType->z_row<<" "<<syncType->z_col<<" "<<syncType->x_row<<" "<<syncType->x_col<<" "<<syncType->y_row<<" "<<syncType->y_col<<" "<<syncType->n<<endl;
+							// cout<<"SyncType S1 is 0, creating S2 =====>"<<s2<<" "<<s2->type<<" "<<s2->value<<" \n";//<<syncType->z_row<<" "<<syncType->z_col<<" "<<syncType->x_row<<" "<<syncType->x_col<<" "<<syncType->y_row<<" "<<syncType->y_col<<" "<<syncType->n<<endl;
 							func2(z,x,y,s2->z_row,s2->z_col, s2->x_row, s2->x_col, s2->y_row, s2->y_col,s2->n,threadId,s2,workId);
 							p=p->syncType;
 							allThreads[threadId]->myStack.decrementStackSyncObject(p);	
 						}else{
-							cout<<" p->value is non zero, breaking"<<endl;
+							// cout<<" p->value is non zero, breaking"<<endl;
 							break;
 						}
 					}else{
@@ -88,7 +88,7 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 							p=p->syncType;
 							allThreads[threadId]->myStack.decrementStackSyncObject(p);	
 						}else{
-							cout<<" p->value is non zero, breaking"<<endl;
+							// cout<<" p->value is non zero, breaking"<<endl;
 							break;
 						}						
 						
@@ -116,7 +116,7 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 
 
 void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
-	cout<<"Func2 "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
+	cout<<"Func2    "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
 	if(syncType!=NULL){
 		cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
 	}else{
@@ -143,7 +143,7 @@ void createParallelThreads(int num_thread){
 }
 
 int main(){
-	int n=4;
+	int n=8;
 	int num_thread=1;
 	int mainThreadId=0;
 	time_t seedTime = time(0);

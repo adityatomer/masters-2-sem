@@ -47,7 +47,7 @@ struct Work{
 
 int getRandomNumber(int mod){
 	srand(time(NULL));
-	int iSecret = rand() % mod + 1;
+	int iSecret = rand() % mod;
 	return iSecret;
 }
 

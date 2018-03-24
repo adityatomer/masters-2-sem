@@ -50,7 +50,7 @@ public:
 		}
 		(st->value)--;
 		if(st->value==0){
-			cout<<"STACK Top address: "<<&stk.top()<<" top value: "<<stk.top()<<" pointer st address: "<<st<<" st.value: "<<st->value<<" ";
+			// cout<<"STACK Top address: "<<&stk.top()<<" top value: "<<stk.top()<<" pointer st address: "<<st<<" st.value: "<<st->value<<" ";
 			stk.pop();
 		}
 		// cout<<"next top is: "<<stk.top()<<endl;
