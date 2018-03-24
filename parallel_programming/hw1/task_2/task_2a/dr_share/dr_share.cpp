@@ -39,15 +39,15 @@ void getMul_IKJ(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,i
 void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType,int workId);
 
 void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
-	cout<<"ParRecMM "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
-	if(syncType!=NULL){
-		cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
-		// if(syncType->value<=0){
-		// 	cout<<"syncType->n: "<<syncType->n<<" syncType->z_row: "<<syncType->z_row<<" syncType->z_col: "<<syncType->z_col<<" syncType->x_row: "<<syncType->x_row<<" syncType->x_col: "<<syncType->x_col<<" syncType->y_row: "<<syncType->y_row<<" syncType->y_col: "<<syncType->y_col<<endl<<endl<<endl;
-		// }
-	}else{
-		cout<<endl;
-	}
+	// cout<<"ParRecMM "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
+	// if(syncType!=NULL){
+	// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
+	// 	// if(syncType->value<=0){
+	// 	// 	cout<<"syncType->n: "<<syncType->n<<" syncType->z_row: "<<syncType->z_row<<" syncType->z_col: "<<syncType->z_col<<" syncType->x_row: "<<syncType->x_row<<" syncType->x_col: "<<syncType->x_col<<" syncType->y_row: "<<syncType->y_row<<" syncType->y_col: "<<syncType->y_col<<endl<<endl<<endl;
+	// 	// }
+	// }else{
+	// 	cout<<endl;
+	// }
 	
 	if(n==1){
 		// cout<<"BASE CASE\n";
@@ -86,11 +86,11 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 						}
 					}else{
 						if(p->value==0){
-							cout<<"PARENT BEFORE p->value: "<<p<<" "<<p->value<<endl;
+							// cout<<"PARENT BEFORE p->value: "<<p<<" "<<p->value<<endl;
 							p=p->syncType;
-							cout<<"PARENT 1. BEFORE p->value: "<<p<<" "<<p->value<<endl;
+							// cout<<"PARENT 1. BEFORE p->value: "<<p<<" "<<p->value<<endl;
 							allThreads[threadId]->myStack.decrementStackSyncObject(p);	
-							cout<<"========== p: "<<p<<" "<<p->value<<endl;
+							// cout<<"========== p: "<<p<<" "<<p->value<<endl;
 							// cout<<"PARENT AFTER p->value: "<<p->value<<endl;
 						}else{
 							// cout<<" p->value is non zero, breaking"<<endl;
@@ -108,28 +108,35 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 	SyncType *s1=getSYNC_1(n,z_row,z_col,x_row,x_col,y_row,y_col,syncType);
 	allThreads[threadId]->myStack.push(s1);	
 	
-	// if(s1->value==0){
-	// 	return;
-	// }
+	// int threadId;
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col, x_row, x_col, y_row, y_col, n/2,threadId,s1));
+	
+	threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col+n/2, x_row, x_col, y_row, y_col+n/2, n/2,threadId,s1));
+	
+	threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row+n/2, z_col, x_row+n/2, x_col, y_row, y_col, n/2,threadId,s1));
+	
+	threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row+n/2, z_col+n/2, x_row+n/2, x_col, y_row, y_col+n/2, n/2, threadId,s1));
-	// ParRecMM(z, x, y, z_row+n/2, z_col, x_row+n/2, x_col, y_row, y_col, n/2,threadId,s1,workId);
-	// s1=allThreads[threadId]->myStack.decrementStackSyncObject(s1);
 }
 
 
 void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
-	cout<<"Func2    "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
-	if(syncType!=NULL){
-		cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
-	}else{
-		cout<<endl;
-	}
+	// cout<<"Func2    "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
+	// if(syncType!=NULL){
+	// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
+	// }else{
+	// 	cout<<endl;
+	// }
+	// int threadId;
+	threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col, x_row, x_col+n/2, y_row+n/2, y_col, n/2,threadId,syncType));
+	threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col+n/2, x_row, x_col+n/2, y_row+n/2, y_col+n/2, n/2,threadId,syncType));
+	threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row+n/2, z_col, x_row+n/2, x_col+n/2, y_row+n/2, y_col, n/2,threadId,syncType));
+	threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row+n/2, z_col+n/2, x_row+n/2, x_col+n/2, y_row+n/2, y_col+n/2, n/2, threadId,syncType));
 	// allThreads[threadId]->myStack.decrementStackSyncObject(syncType);
 }
@@ -150,15 +157,15 @@ void createParallelThreads(int num_thread){
 int main(){
 	int n=8;
 	int num_thread=1;
-	int mainThreadId=0;
 	time_t seedTime = time(0);
 	LL **x = getMatrixOfSizeR(n, 10);
 	LL **y = getMatrixOfSizeR(n, 10);
 	LL **z = getMatrixOfSizeR(n,10,false);
 	createParallelThreads(num_thread);
-	allThreads[mainThreadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,mainThreadId,NULL));
+	int threadId=getRandomNumber(allThreads.size());
+	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,threadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
-		allThreads[i]->compute();
+		allThreads[i]->compute(allThreads.size());
 	}
 	printMat(x,n);
 	cout<<"--------------"<<endl;

@@ -1,8 +1,8 @@
 #ifndef MyDeque_H
 #define MyDeque_H
-
 #include <iostream>
 #include <deque>
+#include <mutex>
 #include "headers.h"
 #include<stdio.h>
 using namespace std;
@@ -19,7 +19,7 @@ class MyDeque{
 		MyDeque(){
 
 		}
-		
+
 		int size(){
 			std::unique_lock<std::mutex> lock(m);
 			return q.size();
@@ -30,11 +30,8 @@ class MyDeque{
 		}
 
 		void push_back(Work item){
-			cout<<"pushing back item \n";
 			std::unique_lock<std::mutex> lock(m);
 			q.push_back(item);
-			cout<<"item pushed back\n";
-			cout<<"releasing lock\n";
 		}
 
 		Work pop_front(){
