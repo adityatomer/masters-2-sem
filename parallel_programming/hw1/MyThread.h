@@ -58,6 +58,7 @@ class MyThread{
 						int randomWorkId=randomNumbers[j++];
 						if(this->allThreads[randomNumber]->myDeque.size()!=0){
 							Work work=this->allThreads[randomNumber]->myDeque.pop_front();	
+							cout<<"Found work for stealing: "<<work.n<<endl;
 							(*(work.fp))(work.z, work.x, work.y, work.z_row, work.z_col,
 							work.x_row, work.x_col, work.y_row, work.y_col, work.n, 
 								work.threadId, work.syncTypePtr,randomWorkId);
