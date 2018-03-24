@@ -22,6 +22,7 @@ struct SyncType{
 	int x_col;
 	int y_row;
 	int y_col;
+	SyncType* syncType;
 };
 
 typedef void(* FP)(LL**,LL**,LL**,int,int,int,int,int,int,int,int,SyncType*,int);
@@ -59,7 +60,7 @@ std::vector<int> getRandomNumbers(int total,int mod){
     return randNums;
 }
 
-SyncType* getSYNC_1(int n,int z_row,int z_col,int x_row,int x_col,int y_row,int y_col){
+SyncType* getSYNC_1(int n,int z_row,int z_col,int x_row,int x_col,int y_row,int y_col,SyncType *syncType){
 	SyncType *st=new SyncType();
 	st->type=1;
 	st->value=4;
@@ -70,6 +71,7 @@ SyncType* getSYNC_1(int n,int z_row,int z_col,int x_row,int x_col,int y_row,int 
 	st->x_col=x_col;
 	st->y_row=y_row;
 	st->y_col=y_col;
+	st->syncType=syncType;
 	return st;
 }
 
@@ -84,6 +86,7 @@ SyncType* getSYNC_2(SyncType *syncType){
 	st->x_col=syncType->x_col;
 	st->y_row=syncType->y_row;
 	st->y_col=syncType->y_col;
+	st->syncType=syncType->syncType;
 	return st;
 }
 

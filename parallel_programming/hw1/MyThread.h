@@ -30,7 +30,7 @@ class MyThread{
 		}
 
 		bool exitCondition(int index){
-			if(index>100){
+			if(index>1000){
 				return true;
 			}
 			return false;
