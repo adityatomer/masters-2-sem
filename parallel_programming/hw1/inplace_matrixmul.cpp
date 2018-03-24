@@ -93,17 +93,6 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 						}						
 						
 					} 
-					// if(p==NULL){
-					// 	cout<<" Moved to parent but parent is NUll \n";
-					// }else{
-					// 	cout<<"Moved to Parent: "<<p<<" z_row: "<<p->z_row<<" z_col: "<<p->z_col<<" x_row: "<<p->x_row<<" x_col: "<<p->x_col<<" y_row: "<<p->y_row<<" y_col: "<<p->y_col<<" size: "<<p->n<<" syncType type: "<<p->syncType;
-					// 	if(p->syncType!=NULL){
-					// 		cout<<" syncType: "<<p->syncType->type<<" syncValue: "<<p->syncType->value<<endl;
-					// 	}else{
-					// 		cout<<endl;
-					// 	}
-					// }
-					
 				}
 			}
 
@@ -111,13 +100,12 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 		return;
 	}
 
-	SyncType *s1=NULL;
-	s1=getSYNC_1(n,z_row,z_col,x_row,x_col,y_row,y_col,syncType);
+	SyncType *s1=getSYNC_1(n,z_row,z_col,x_row,x_col,y_row,y_col,syncType);
 	allThreads[threadId]->myStack.push(s1);	
 	
-	if(s1->value==0){
-		return;
-	}
+	// if(s1->value==0){
+	// 	return;
+	// }
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col, x_row, x_col, y_row, y_col, n/2,threadId,s1));
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row, z_col+n/2, x_row, x_col, y_row, y_col+n/2, n/2,threadId,s1));
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z, x, y, z_row+n/2, z_col, x_row+n/2, x_col, y_row, y_col, n/2,threadId,s1));
@@ -155,7 +143,7 @@ void createParallelThreads(int num_thread){
 }
 
 int main(){
-	int n=8;
+	int n=4;
 	int num_thread=1;
 	int mainThreadId=0;
 	time_t seedTime = time(0);
