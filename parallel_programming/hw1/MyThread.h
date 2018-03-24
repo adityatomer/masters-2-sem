@@ -61,7 +61,7 @@ class MyThread{
 							cout<<"Found work for stealing: "<<work.n<<endl;
 							(*(work.fp))(work.z, work.x, work.y, work.z_row, work.z_col,
 							work.x_row, work.x_col, work.y_row, work.y_col, work.n, 
-								work.threadId, work.syncTypePtr,randomWorkId);
+								id, work.syncTypePtr,randomWorkId);
 						}
 					}
 				}else{

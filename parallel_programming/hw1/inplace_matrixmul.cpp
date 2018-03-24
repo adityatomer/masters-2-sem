@@ -78,7 +78,8 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 							// cout<<"SyncType S1 is 0, creating S2 =====>"<<s2<<" "<<s2->type<<" "<<s2->value<<" \n";//<<syncType->z_row<<" "<<syncType->z_col<<" "<<syncType->x_row<<" "<<syncType->x_col<<" "<<syncType->y_row<<" "<<syncType->y_col<<" "<<syncType->n<<endl;
 							func2(z,x,y,s2->z_row,s2->z_col, s2->x_row, s2->x_col, s2->y_row, s2->y_col,s2->n,threadId,s2,workId);
 							// p=p->syncType;
-							allThreads[threadId]->myStack.decrementStackSyncObject(p);	
+							// allThreads[threadId]->myStack.decrementStackSyncObject(p);	
+							break;
 						}else{
 							// cout<<" p->value is non zero, breaking"<<endl;
 							break;
