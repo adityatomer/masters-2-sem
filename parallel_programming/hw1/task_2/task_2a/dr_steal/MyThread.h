@@ -33,8 +33,8 @@ class MyThread{
 			return w;
 		}
 
-		bool exitCondition(int index){
-			if(index>1000){
+		bool exitCondition(int index, int totalThreadSize){
+			if(index>totalThreadSize){
 				return true;
 			}
 			return false;
@@ -49,16 +49,16 @@ class MyThread{
 				// cout<<"myDeque.size(): "<<myDeque.size()<<endl;
 				//steal
 				if(myDeque.size()==0){
-					if(exitCondition(index++)){
+					if(exitCondition(index++,allThreads.size())){	
 						break;
 					}else{
-						// cout<<"stealing from random queue: "<<randomNumber<<" ";
 						int randomNumber=getRandomNumber(allThreads.size());
+						cout<<"stealing from random queue: "<<randomNumber<<" \n";
 						Work w;
 						int randomWorkId=randomNumbers[j++];
 						if(this->allThreads[randomNumber]->myDeque.size()!=0){
 							Work work=this->allThreads[randomNumber]->myDeque.pop_front();	
-							cout<<"Found work for stealing: "<<work.n<<endl;
+							cout<<"Found work for stealing threadId: "<<randomNumber<<" Q.size(): "<<this->allThreads[randomNumber]->myDeque.size()<<"n: "<<work.n<<endl;
 							(*(work.fp))(work.z, work.x, work.y, work.z_row, work.z_col,
 							work.x_row, work.x_col, work.y_row, work.y_col, work.n, 
 								id, work.syncTypePtr,randomWorkId);
@@ -73,7 +73,7 @@ class MyThread{
 					// int x_row,int x_col,int y_row,int y_col, int n, int threadId){
 					(*(work.fp))(work.z, work.x, work.y, work.z_row, work.z_col,
 						work.x_row, work.x_col, work.y_row, work.y_col, work.n, 
-							work.threadId, work.syncTypePtr,randomWorkId);
+							id, work.syncTypePtr,randomWorkId);
 				}
 			}
 		}

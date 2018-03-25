@@ -1,5 +1,6 @@
 #include "headers.h"
 #include "MyThread.h"
+#include<cilk/cilk.h>
 using namespace std;
 
 std::vector<MyThread*>allThreads;
@@ -39,7 +40,7 @@ void getMul_IKJ(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,i
 void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType,int workId);
 
 void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
-	// cout<<"ParRecMM "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
+	//cout<<"ParRecMM "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType<<endl;
 	// if(syncType!=NULL){
 	// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
 	// 	// if(syncType->value<=0){
@@ -118,7 +119,7 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 
 
 void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
-	// cout<<"Func2    "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
+	//cout<<"Func2    "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType<<endl;
 	// if(syncType!=NULL){
 	// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
 	// }else{
@@ -139,14 +140,14 @@ void createParallelThreads(int num_thread){
 	for(int i=0;i<num_thread;++i){
 		allThreads[i]->setAllThreads(allThreads);
 	}
-	for(int i=0;i<num_thread;++i){
-		allThreads[i]->setAllThreads(allThreads);
-	}
+	//for(int i=0;i<num_thread;++i){
+	//	allThreads[i]->setAllThreads(allThreads);
+	//}
 }
 
 int main(){
-	int n=8;
-	int num_thread=1;
+	int n=16;
+	int num_thread=4;
 	int mainThreadId=0;
 	time_t seedTime = time(0);
 	LL **x = getMatrixOfSizeR(n, 10);
@@ -155,8 +156,10 @@ int main(){
 	createParallelThreads(num_thread);
 	allThreads[mainThreadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,mainThreadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
-		allThreads[i]->compute();
+		//cout<<"MAIN: spawning thread: "<<i<<endl;
+		cilk_spawn allThreads[i]->compute();
 	}
+	cilk_sync;
 	printMat(x,n);
 	cout<<"--------------"<<endl;
 	printMat(y,n);
