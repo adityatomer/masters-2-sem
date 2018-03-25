@@ -5,7 +5,18 @@ using namespace std;
 
 std::vector<MyThread*>allThreads;
 
-void getMul_IKJ(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, LL n, int threadId){
+void handle_error(int err){
+    std::cerr << "PAPI error: " << err << std::endl;
+}
+
+long long** getMul_IKJ(long long **z, long long **x, long long **y,long long n){
+
+	int numEvents = 2;
+	long long values[2];
+	int events[2]= {PAPI_L1_TCA, PAPI_L1_DCM};
+	if (PAPI_start_counters(events, numEvents) != PAPI_OK)
+        handle_error(1)
+
 	for(int i=0;i<n;++i){
 		for(int k=0;k<n;++k){
 			for(int j=0;j<n;++j){
@@ -13,6 +24,15 @@ void getMul_IKJ(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,i
 			}
 		}
 	}
+	if ( PAPI_stop_counters(values, numEvents) != PAPI_OK)
+        handle_error(1);
+  
+
+    cout<<"L1 accesses: "<<values[0]<<endl;
+    cout<<"L1 misses: "<<values[1]<<endl;
+    cout<<"L1 miss/access ratio: "<<(double)values[1]/values[0]<<endl;
+
+	return z;
 }
 
 // void getMul(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, LL n){
