@@ -1,5 +1,6 @@
 #include "headers.h"
 #include "MyThread.h"
+#include<cilk/cilk.h>
 using namespace std;
 
 std::vector<MyThread*>allThreads;
@@ -156,8 +157,9 @@ int main(){
 	createParallelThreads(num_thread);
 	centralizedDeque->push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,mainThreadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
-		allThreads[i]->compute();
+		cilk_spawn allThreads[i]->compute(allThreads.size());
 	}
+	cilk_sync;
 	printMat(x,n);
 	cout<<"--------------"<<endl;
 	printMat(y,n);

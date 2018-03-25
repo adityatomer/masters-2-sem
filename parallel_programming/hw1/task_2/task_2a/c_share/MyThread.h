@@ -21,21 +21,21 @@ class MyThread{
 			this->centralizedDeque=centralizedDeque;
 		}
 
-		bool exitCondition(int index){
+		bool exitCondition(int index,int totalThreads){
 			if(index>10){
 				return true;
 			}
 			return false;
 		}
 
-		void compute(){
+		void compute(int totalThreads){
 			time_t st=time(0);
 			int index=0;
 			std::vector<int>randomNumbers=getRandomNumbers(1000,10000);
 			int j=0;
 			while(true){
 				if(centralizedDeque->size()==0){
-					if(exitCondition(index++)){
+					if(exitCondition(index++,totalThreads)){
 						break;
 					}
 				}else{

@@ -40,7 +40,7 @@ class MyThread{
 			return false;
 		}
 
-		void compute(int totalThreads){
+		void compute(){
 			time_t st=time(0);
 			int index=0;
 			std::vector<int>randomNumbers=getRandomNumbers(1000,10000);
@@ -49,7 +49,7 @@ class MyThread{
 				// cout<<"myDeque.size(): "<<myDeque.size()<<endl;
 				//steal
 				if(myDeque.size()==0){
-					if(exitCondition(index++,totalThreads)){
+					if(exitCondition(index++,allThreads.size())){
 						break;
 					}
 				}else{

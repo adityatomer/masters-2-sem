@@ -1,5 +1,6 @@
 #include "headers.h"
 #include "MyThread.h"
+#include<cilk/cilk.h>
 using namespace std;
 
 std::vector<MyThread*>allThreads;
@@ -155,22 +156,26 @@ void createParallelThreads(int num_thread){
 }
 
 int main(){
-	int n=8;
+	int n=256;
 	int num_thread=1;
 	time_t seedTime = time(0);
 	LL **x = getMatrixOfSizeR(n, 10);
 	LL **y = getMatrixOfSizeR(n, 10);
 	LL **z = getMatrixOfSizeR(n,10,false);
+	time_t st=time(NULL);
 	createParallelThreads(num_thread);
 	int threadId=getRandomNumber(allThreads.size());
 	allThreads[threadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,threadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
-		allThreads[i]->compute(allThreads.size());
+		cilk_spawn allThreads[i]->compute();
 	}
+	cilk_sync;
+	time_t totalTime=time(NULL)-st;
 	printMat(x,n);
 	cout<<"--------------"<<endl;
 	printMat(y,n);
 	cout<<"---result----"<<endl;
 	printMat(z,n);
+	cout<<"\n\nTotal Time taken DR_SHARE (Excluding Matrix printing time): "<<totalTime<<endl<<endl;
 	return 0;
 }

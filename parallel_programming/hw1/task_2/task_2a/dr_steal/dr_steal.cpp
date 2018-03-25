@@ -167,6 +167,6 @@ int main(){
 	printMat(y,n);
 	cout<<"---result----"<<endl;
 	printMat(z,n);
-	cout<<"\n\n Total Time taken(Excluding Matrix printing time): "<<totalTime<<endl;
+	cout<<"\n\n Total Time taken DR_STEAL (Excluding Matrix printing time): "<<totalTime<<endl;
 	return 0;
 }
