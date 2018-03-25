@@ -61,7 +61,7 @@ class MyThread{
 					// int x_row,int x_col,int y_row,int y_col, int n, int threadId){
 					(*(work.fp))(work.z, work.x, work.y, work.z_row, work.z_col,
 						work.x_row, work.x_col, work.y_row, work.y_col, work.n, 
-							work.threadId, work.syncTypePtr,randomWorkId);
+							id, work.syncTypePtr,randomWorkId);
 				}
 			}
 		}

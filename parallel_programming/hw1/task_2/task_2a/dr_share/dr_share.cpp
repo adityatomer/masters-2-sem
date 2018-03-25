@@ -157,7 +157,7 @@ void createParallelThreads(int num_thread){
 
 int main(){
 	int n=256;
-	int num_thread=1;
+	int num_thread=4;
 	time_t seedTime = time(0);
 	LL **x = getMatrixOfSizeR(n, 10);
 	LL **y = getMatrixOfSizeR(n, 10);
