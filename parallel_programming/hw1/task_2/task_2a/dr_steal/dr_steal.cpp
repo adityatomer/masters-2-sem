@@ -146,13 +146,14 @@ void createParallelThreads(int num_thread){
 }
 
 int main(){
-	int n=16;
+	int n=256;
 	int num_thread=4;
 	int mainThreadId=0;
 	time_t seedTime = time(0);
 	LL **x = getMatrixOfSizeR(n, 10);
 	LL **y = getMatrixOfSizeR(n, 10);
 	LL **z = getMatrixOfSizeR(n,10,false);
+	time_t st=time(NULL);
 	createParallelThreads(num_thread);
 	allThreads[mainThreadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,mainThreadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
@@ -160,10 +161,12 @@ int main(){
 		cilk_spawn allThreads[i]->compute();
 	}
 	cilk_sync;
+	time_t totalTime=time(NULL)-st;
 	printMat(x,n);
 	cout<<"--------------"<<endl;
 	printMat(y,n);
 	cout<<"---result----"<<endl;
 	printMat(z,n);
+	cout<<"\n\n Total Time taken(Excluding Matrix printing time): "<<totalTime<<endl;
 	return 0;
 }
