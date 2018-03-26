@@ -1,22 +1,9 @@
-#include "headers.h"
 #include "MyThread.h"
-#include<cilk/cilk.h>
 using namespace std;
 
 std::vector<MyThread*>allThreads;
 
-void handle_error(int err){
-    std::cerr << "PAPI error: " << err << std::endl;
-}
-
-long long** getMul_IKJ(long long **z, long long **x, long long **y,long long n){
-
-	int numEvents = 2;
-	long long values[2];
-	int events[2]= {PAPI_L1_TCA, PAPI_L1_DCM};
-	if (PAPI_start_counters(events, numEvents) != PAPI_OK)
-        handle_error(1)
-
+void getMul_IKJ(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, LL n, int threadId){
 	for(int i=0;i<n;++i){
 		for(int k=0;k<n;++k){
 			for(int j=0;j<n;++j){
@@ -24,15 +11,6 @@ long long** getMul_IKJ(long long **z, long long **x, long long **y,long long n){
 			}
 		}
 	}
-	if ( PAPI_stop_counters(values, numEvents) != PAPI_OK)
-        handle_error(1);
-  
-
-    cout<<"L1 accesses: "<<values[0]<<endl;
-    cout<<"L1 misses: "<<values[1]<<endl;
-    cout<<"L1 miss/access ratio: "<<(double)values[1]/values[0]<<endl;
-
-	return z;
 }
 
 // void getMul(LL **z,LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, LL n){
@@ -57,9 +35,9 @@ long long** getMul_IKJ(long long **z, long long **x, long long **y,long long n){
 // 	printMat(z,n);
 // 	return z;
 // }
-void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType,int workId);
+void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType);
 
-void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
+void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType){
 	//cout<<"ParRecMM "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType<<endl;
 	// if(syncType!=NULL){
 	// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
@@ -80,7 +58,7 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 			// allThreads[threadId]->myStack.push(s2);
 			// cout<<"SyncType S1 is 0, creating S2 =====>"<<s2<<" "<<s2->type<<" "<<s2->value<<" \n";//<<syncType->z_row<<" "<<syncType->z_col<<" "<<syncType->x_row<<" "<<syncType->x_col<<" "<<syncType->y_row<<" "<<syncType->y_col<<" "<<syncType->n<<endl;
 			// func2(z,x,y,syncType->z_row,syncType->z_col, syncType->x_row, syncType->x_col, syncType->y_row, syncType->y_col,syncType->n,threadId,s2,workId);
-			if(syncType->value==0){
+			if(readSyncValue(syncType)==0){
 				// cout<<"\nFunc2 SyncType 2 reached 0 for "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
 				// if(syncType!=NULL){
 				// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
@@ -97,7 +75,7 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 							SyncType *s2=getSYNC_2(p);
 							allThreads[threadId]->myStack.push(s2);
 							// cout<<"SyncType S1 is 0, creating S2 =====>"<<s2<<" "<<s2->type<<" "<<s2->value<<" \n";//<<syncType->z_row<<" "<<syncType->z_col<<" "<<syncType->x_row<<" "<<syncType->x_col<<" "<<syncType->y_row<<" "<<syncType->y_col<<" "<<syncType->n<<endl;
-							func2(z,x,y,s2->z_row,s2->z_col, s2->x_row, s2->x_col, s2->y_row, s2->y_col,s2->n,threadId,s2,workId);
+							func2(z,x,y,s2->z_row,s2->z_col, s2->x_row, s2->x_col, s2->y_row, s2->y_col,s2->n,threadId,s2);
 							// p=p->syncType;
 							// allThreads[threadId]->myStack.decrementStackSyncObject(p);	
 							break;
@@ -138,7 +116,7 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 }
 
 
-void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType, int workId){
+void func2(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId, SyncType *syncType){
 	//cout<<"Func2    "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType<<endl;
 	// if(syncType!=NULL){
 	// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
@@ -165,8 +143,9 @@ void createParallelThreads(int num_thread){
 	//}
 }
 
-int main(){
-	int n=256;
+int main(int argc, char *argv[1]){
+	int n=atoi(argv[1]);
+	cout<<"n: "<<n<<endl; 
 	int num_thread=4;
 	int mainThreadId=0;
 	time_t seedTime = time(0);
@@ -178,15 +157,15 @@ int main(){
 	allThreads[mainThreadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,mainThreadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
 		//cout<<"MAIN: spawning thread: "<<i<<endl;
-		cilk_spawn allThreads[i]->compute();
+		 allThreads[i]->compute();
 	}
-	cilk_sync;
+	// cilk_sync;
 	time_t totalTime=time(NULL)-st;
-	printMat(x,n);
+	// printMat(x,n);
 	cout<<"--------------"<<endl;
-	printMat(y,n);
+	// printMat(y,n);
 	cout<<"---result----"<<endl;
-	printMat(z,n);
+	// printMat(z,n);
 	cout<<"\n\n Total Time taken DR_STEAL (Excluding Matrix printing time): "<<totalTime<<endl;
 	return 0;
 }

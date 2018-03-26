@@ -1,11 +1,11 @@
 #ifndef MYSTACK_H
 #define MYSTACK_H
 
+#include<stdio.h>
 #include <iostream>
 #include <stack>
 #include <mutex>
-#include "headers.h"
-#include<stdio.h>
+#include "basicheader.h"
 using namespace std;
 
 class MyStack{
@@ -31,9 +31,7 @@ public:
 
 	void push(SyncType *st){
 		std::unique_lock<std::mutex>lock(m);
-		// cout<<"pushing on stack \n";
 		stk.push(st);
-		// cout<<"pushed on stack \n";
 	}
 
 	SyncType* pop(){
@@ -57,28 +55,10 @@ public:
 		return st;
 	}
 
+	
+
 	~MyStack();
 };
-
-// int main(){
-// 	MyStack s;
-// 	SyncType st;
-// 	st.type=1;
-// 	st.value=4;
-// 	s.push(st);
-
-
-// 	if(s.empty()){
-// 		cout<<"stack is empty";
-// 		return 0;
-// 	}else{
-// 		cout<<"stack is not empty";
-// 	}
-
-// 	SyncType st1=s.pop();
-// 	cout<<"type: "<<st1.type<<" value: "<<st1.value;
-// 	return 0;
-// }
 
 #endif
 

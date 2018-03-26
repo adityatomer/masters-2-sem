@@ -1,49 +1,18 @@
 #ifndef HEADERS_H
 #define HEADERS_H
 
-#include <string> 
-#include <stdlib.h>
-#include <ctime>
 #include<iostream>
 #include<stdio.h>
 #include<math.h>
 #include<time.h>
 #include<array>
 #include<vector>
-
-typedef long long LL;
-struct SyncType{
-	int type;
-	int value;
-	int n;
-	int z_row;
-	int z_col;
-	int x_row;
-	int x_col;
-	int y_row;
-	int y_col;
-	SyncType* syncType;
-};
-
-typedef void(* FP)(LL**,LL**,LL**,int,int,int,int,int,int,int,int,SyncType*,int);
+#include <string> 
+#include <stdlib.h>
+#include <ctime>
+#include "MyDeque.h"
+#include "MyStack.h"
 using namespace std;
-
-struct Work{
-	int id;
-	FP fp;
-	SyncType *syncTypePtr;
-	LL** x;
-	LL** y;
-	LL** z;
-	int n;
-	int z_row;
-	int z_col;
-	int x_row;
-	int x_col;
-	int y_row;
-	int y_col;
-	int threadId;
-};
 
 int getRandomNumber(int mod){
 	srand(time(NULL));
@@ -107,22 +76,22 @@ LL** getMatrixOfSizeR(int n, int mod, bool isRandom=true){
 	return x;
 }
 
-Work getWorkObject(FP fp,LL** z,LL** x,LL** y, int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId,SyncType *syncTypePtr){
-	Work w;//=new Work;
+Work* getWorkObject(FP fp,LL** z,LL** x,LL** y, int z_row,int z_col, int x_row,int x_col,int y_row,int y_col, int n, int threadId,SyncType *syncTypePtr){
+	Work *w=new Work;
 	// w.id=wId();
-	w.fp=fp;
-	w.syncTypePtr=syncTypePtr;//
-	w.z=z;
-	w.x=x;
-	w.y=y;
-	w.z_row=z_row;
-	w.z_col=z_col;
-	w.x_row=x_row;
-	w.x_col=x_col;
-	w.y_row=y_row;
-	w.y_col=y_col;
-	w.n=n;
-	w.threadId=threadId;
+	w->fp=fp;
+	w->syncTypePtr=syncTypePtr;//
+	w->z=z;
+	w->x=x;
+	w->y=y;
+	w->z_row=z_row;
+	w->z_col=z_col;
+	w->x_row=x_row;
+	w->x_col=x_col;
+	w->y_row=y_row;
+	w->y_col=y_col;
+	w->n=n;
+	w->threadId=threadId;
 	return w;
 }
 

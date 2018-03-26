@@ -1,9 +1,10 @@
+#ifndef MYTHREAD_H
+#define MYTHREAD_H
+
 #include <iostream>
 #include <deque>
 #include<time.h>
 #include<stdio.h>
-#include "MyDeque.h"
-#include "MyStack.h"
 #include "headers.h"
 using namespace std;
 
@@ -20,17 +21,6 @@ class MyThread{
 
 		void setAllThreads(std::vector<MyThread*> allThreads){
 			this->allThreads=allThreads;
-		}
-
-		Work stealWorkFromRandomDeque(){
-			int randomNumber=getRandomNumber(allThreads.size());
-			// cout<<"stealing from random queue: "<<randomNumber<<" ";
-			Work w;
-			if(this->allThreads[randomNumber]->myDeque.size()!=0){
-				Work w=this->allThreads[randomNumber]->myDeque.pop_front();	
-			}
-			
-			return w;
 		}
 
 		bool exitCondition(int index, int totalThreadSize){
@@ -54,28 +44,28 @@ class MyThread{
 					}else{
 						int randomNumber=getRandomNumber(allThreads.size());
 						//cout<<"stealing from random queue: "<<randomNumber<<" \n";
-						Work w;
-						int randomWorkId=randomNumbers[j++];
-						if(this->allThreads[randomNumber]->myDeque.size()!=0){
-							Work work=this->allThreads[randomNumber]->myDeque.pop_front();	
+						if(this->allThreads[randomNumber]->myDeque.size() > 0){
+							Work *work=this->allThreads[randomNumber]->myDeque.pop_front();	
 							//cout<<"Found work for stealing threadId: "<<randomNumber<<" Q.size(): "<<this->allThreads[randomNumber]->myDeque.size()<<"n: "<<work.n<<endl;
-							(*(work.fp))(work.z, work.x, work.y, work.z_row, work.z_col,
-							work.x_row, work.x_col, work.y_row, work.y_col, work.n, 
-								id, work.syncTypePtr,randomWorkId);
+							(*(work->fp))(work->z, work->x, work->y, work->z_row, work->z_col,
+							work->x_row, work->x_col, work->y_row, work->y_col, work->n, 
+								id, work->syncTypePtr);
 						}
 					}
 				}else{
 					// cout<<"IN COMPUTE \n";
-					int randomWorkId=randomNumbers[j++];
-					Work work=myDeque.pop_back();
+					Work *work=myDeque.pop_back();
+					if(work!=NULL){
+						(*(work->fp))(work->z, work->x, work->y, work->z_row, work->z_col,
+						work->x_row, work->x_col, work->y_row, work->y_col, work->n, 
+							id, work->syncTypePtr);
+					}
 					// cout<<"Dequing from queue. Q.size(): "<<myDeque.size()<<" workId: "<<work.id<<" matrix size: "<<work.n<<"\n";
 					//void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, 
 					// int x_row,int x_col,int y_row,int y_col, int n, int threadId){
-					(*(work.fp))(work.z, work.x, work.y, work.z_row, work.z_col,
-						work.x_row, work.x_col, work.y_row, work.y_col, work.n, 
-							id, work.syncTypePtr,randomWorkId);
 				}
 			}
 		}
 };
 
+#endif
