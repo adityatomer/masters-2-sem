@@ -23,7 +23,18 @@ struct SyncType{
 
 int readSyncValue(SyncType *s){
 		std::unique_lock<std::mutex>lock(m);	
+		if(s==NULL){
+			return -1;
+		}
 		return s->value;
+}
+
+int readSyncType(SyncType *s){
+		std::unique_lock<std::mutex>lock(m);	
+		if(s==NULL){
+			return -1;
+		}
+		return s->type;
 }
 
 typedef void(* FP)(LL**,LL**,LL**,int,int,int,int,int,int,int,int,SyncType*);

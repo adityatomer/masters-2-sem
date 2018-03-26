@@ -1,4 +1,8 @@
 #include "MyThread.h"
+#include<cilk/cilk.h>
+#include <ctime>
+#include <ratio>
+#include <chrono>
 using namespace std;
 
 std::vector<MyThread*>allThreads;
@@ -51,14 +55,14 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 	if(n==1){
 		// cout<<"BASE CASE\n";
 		getMul_IKJ(z,x,y,z_row, z_col, x_row, x_col, y_row, y_col,n,threadId);
- 		allThreads[threadId]->myStack.decrementStackSyncObject(syncType);
+ 		syncType=allThreads[threadId]->myStack.decrementStackSyncObject(syncType);
 
 		// if(syncType!=NULL && syncType->type==1 && syncType->value==0){
 			// SyncType *s2=getSYNC_2(syncType);
 			// allThreads[threadId]->myStack.push(s2);
 			// cout<<"SyncType S1 is 0, creating S2 =====>"<<s2<<" "<<s2->type<<" "<<s2->value<<" \n";//<<syncType->z_row<<" "<<syncType->z_col<<" "<<syncType->x_row<<" "<<syncType->x_col<<" "<<syncType->y_row<<" "<<syncType->y_col<<" "<<syncType->n<<endl;
 			// func2(z,x,y,syncType->z_row,syncType->z_col, syncType->x_row, syncType->x_col, syncType->y_row, syncType->y_col,syncType->n,threadId,s2,workId);
-			if(readSyncValue(syncType)==0){
+			if(syncType && readSyncValue(syncType)==0){
 				// cout<<"\nFunc2 SyncType 2 reached 0 for "<<" threadId: "<<threadId<<" z_row: "<<z_row<<" z_col: "<<z_col<<" x_row: "<<x_row<<" x_col: "<<x_col<<" y_row: "<<y_row<<" y_col: "<<y_col<<" size: "<<n<<" syncType: "<<syncType;
 				// if(syncType!=NULL){
 				// 	cout<<" syncType: "<<syncType->type<<" syncValue: "<<syncType->value<<endl;
@@ -68,9 +72,9 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 				SyncType *p=syncType;
 
 				while(p!=NULL){
-					if(p->type==1){
+					if(readSyncType(p)==1){
 						// cout<<" p->type: "<<p->type;
-						if(p->value==0){
+						if(p && readSyncValue(p)==0){
 							// cout<<" p->value is zero"<<endl;
 							SyncType *s2=getSYNC_2(p);
 							allThreads[threadId]->myStack.push(s2);
@@ -84,9 +88,9 @@ void ParRecMM(LL** z, LL **x, LL **y,int z_row,int z_col, int x_row,int x_col,in
 							break;
 						}
 					}else{
-						if(p->value==0){
+						if(p && readSyncValue(p)==0){
 							p=p->syncType;
-							allThreads[threadId]->myStack.decrementStackSyncObject(p);	
+							p=allThreads[threadId]->myStack.decrementStackSyncObject(p);	
 							// cout<<"PARENT AFTER p->value: "<<p->value<<endl;
 						}else{
 							// cout<<" p->value is non zero, breaking"<<endl;
@@ -152,20 +156,24 @@ int main(int argc, char *argv[1]){
 	LL **x = getMatrixOfSizeR(n, 10);
 	LL **y = getMatrixOfSizeR(n, 10);
 	LL **z = getMatrixOfSizeR(n,10,false);
-	time_t st=time(NULL);
+	using namespace std::chrono;
+    high_resolution_clock::time_point t1 = high_resolution_clock::now();
 	createParallelThreads(num_thread);
 	allThreads[mainThreadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,mainThreadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
 		//cout<<"MAIN: spawning thread: "<<i<<endl;
-		 allThreads[i]->compute();
+		 cilk_spawn allThreads[i]->compute();
 	}
-	// cilk_sync;
-	time_t totalTime=time(NULL)-st;
-	// printMat(x,n);
-	cout<<"--------------"<<endl;
-	// printMat(y,n);
-	cout<<"---result----"<<endl;
-	// printMat(z,n);
-	cout<<"\n\n Total Time taken DR_STEAL (Excluding Matrix printing time): "<<totalTime<<endl;
-	return 0;
+	cilk_sync;
+    high_resolution_clock::time_point t2 = high_resolution_clock::now();
+    duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
+
+    cout<<"\n\n Total Time taken DR_STEAL (Excluding Matrix printing time): "<<time_span.count() <<endl;
+    cout<<"--------------"<<endl;
+    //printMat(y,n);
+    cout<<"---result----"<<endl;
+    //printMat(z,n);
+    return 0;
 }
+
+
