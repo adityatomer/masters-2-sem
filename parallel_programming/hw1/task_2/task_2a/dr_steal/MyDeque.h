@@ -36,6 +36,9 @@ class MyDeque{
 
 		Work* pop_front(){
 			std::unique_lock<std::mutex> lock(m);
+			if(q.size()==0){
+				return NULL;
+			}
 			Work *front=q.front();
 			q.pop_front();
 			return front;
@@ -43,6 +46,9 @@ class MyDeque{
 
 		Work* pop_back(){
 			std::unique_lock<std::mutex> lock(m);
+			if(q.size()==0){
+				return NULL;
+			}
 			Work *back=q.back();
 			q.pop_back();
 			return back;

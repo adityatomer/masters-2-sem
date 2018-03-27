@@ -1,5 +1,5 @@
 #include "MyThread.h"
-#include<cilk/cilk.h>
+// #include<cilk/cilk.h>
 #include <ctime>
 #include <ratio>
 #include <chrono>
@@ -149,8 +149,10 @@ void createParallelThreads(int num_thread){
 
 int main(int argc, char *argv[1]){
 	int n=atoi(argv[1]);
-	cout<<"n: "<<n<<endl; 
-	int num_thread=4;
+	int num_thread=atoi(argv[2]);
+
+	cout<<"n: "<<n<<" num_thread: "<<num_thread<<endl; 
+	
 	int mainThreadId=0;
 	time_t seedTime = time(0);
 	LL **x = getMatrixOfSizeR(n, 10);
@@ -162,9 +164,10 @@ int main(int argc, char *argv[1]){
 	allThreads[mainThreadId]->myDeque.push_back(getWorkObject(&ParRecMM,z,x,y,0,0,0,0,0,0,n,mainThreadId,NULL));
 	for(int i=0;i<allThreads.size();++i){
 		//cout<<"MAIN: spawning thread: "<<i<<endl;
-		 cilk_spawn allThreads[i]->compute();
+		allThreads[i]->compute();
+		// cilk_spawn allThreads[i]->compute();
 	}
-	cilk_sync;
+	// cilk_sync;
     high_resolution_clock::time_point t2 = high_resolution_clock::now();
     duration<double> time_span = duration_cast<duration<double>>(t2 - t1);
 
@@ -172,7 +175,7 @@ int main(int argc, char *argv[1]){
     cout<<"--------------"<<endl;
     //printMat(y,n);
     cout<<"---result----"<<endl;
-    //printMat(z,n);
+    printMat(z,n);
     return 0;
 }
 
