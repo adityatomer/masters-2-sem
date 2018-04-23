@@ -1,4 +1,4 @@
-CXX=icpc
+CXX=g++
 
 CXXFLAGS=-std=c++11
 
